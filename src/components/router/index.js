@@ -32,7 +32,9 @@ const routes=[
 ]
 
 const router=createRouter({history:createWebHistory(),routes});
+
 const routingNames=["login","signup","home"]
+
 router.beforeEach((to,from,next)=>{
   const isAuthenticated = JSON.parse(localStorage.getItem("loggedIn"));
    

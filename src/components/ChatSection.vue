@@ -60,7 +60,7 @@ emit("styling",props.msgData.message);
 }
 .receiver {
   align-self: flex-start;
-  background-color: #05c4b4;
+  background-color: #dae6e4;
   color: black;
   text-align: left;
 }
