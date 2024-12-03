@@ -2,11 +2,11 @@
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ChatSection from "./ChatSection.vue";
-
+let msgFromChatSection=ref('');
 const router1 = useRouter();
 const usersArray = ref([]);
 let loggedUser = ref({});
-
+let divStyling=ref(false);
 //msg from input box
 const msg = ref("");
 const chatArrayForLocalStorage = ref([]);
@@ -49,9 +49,13 @@ onMounted(() => {
     });
     usersArray.value = arrayFiltered;
   }
-
+  clearStyling();
   retrieveChats();
 });
+const clearStyling=()=>{
+  msgFromChatSection.value='';
+  divStyling.value=false
+}
 const retrieveChats = () => {
   const retrievedChats = localStorage.getItem("chats");
   chatArrayForLocalStorage.value = retrievedChats
@@ -61,6 +65,7 @@ const retrieveChats = () => {
 
 const selectUser = (i) => {
   selectedUser.value = i;
+  clearStyling();
   chatMessage.value.to = selectedUser.value.id;
   chatDetailsObject.value.messageId =
     chatMessage.value.from + "-" + chatMessage.value.to;
@@ -98,6 +103,7 @@ const selectUser = (i) => {
 };
 
 const sendMessage = () => {
+  clearStyling()
   if (msg.value) {
     const newMessage = {
       ...chatMessage.value,
@@ -141,6 +147,7 @@ const sendMessage = () => {
   }
 };
 const clearChat = () => {
+  clearStyling();
   console.log("Chat cleared");
   if (msgsArray.value) {
     if (
@@ -173,6 +180,12 @@ const handleLogout = () => {
   localStorage.removeItem("loggedIn");
   router1.push("/");
 };
+//Taking Emit message from chatSection component
+const divStyle=(i)=>{
+divStyling.value=true;
+console.log(i);
+msgFromChatSection.value=i;
+}
 </script>
 
 <template>
@@ -196,13 +209,14 @@ const handleLogout = () => {
         Chat with <span v-if="selectedUser">{{ selectedUser.name }}</span>
         <span @click="clearChat" id="clear">Clear Chat</span>
       </h3>
-      <div class="chat-messages">
+      <div class="chat-messages"  @click.self="clearStyling">
+      <div v-show="divStyling"><p id="chatMessageSelection">{{msgFromChatSection}}</p></div>
         <div v-if="msgsArray.length">
-       
           <ChatSection v-for="(i,index) in msgsArray"
            :key="index"
            :msgData="i"
            :loggedUser="loggedUser"
+           @styling="divStyle"
           />
         </div>
       </div>
@@ -322,6 +336,34 @@ const handleLogout = () => {
 .selected {
   background-color: #74a9e2;
   color: white;
+}
+
+
+#chatMessageSelection {background: url("https://images.unsplash.com/photo-1605707159327-f43132f89a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80");
+	/*background-size: contain;*/
+	background-clip: text;
+	-webkit-background-clip: text;
+text-align: center;   
+animation-name: plastic;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;}
+div p {margin: 0px; color: transparent;
+font-size: 30px; font-family: "Open Sans", sans-serif;   font-weight: bold;
+	text-shadow: 0 4px 4px rgba(0, 0, 0, .25);text-transform: uppercase;
+text-align: center;
+}
+
+
+@keyframes plastic {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 50px;
+  }
+    100% {
+    background-position: 0 0;
+  }
 }
 
 </style>

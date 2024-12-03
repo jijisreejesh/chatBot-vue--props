@@ -9,11 +9,15 @@ const props=defineProps({
     }
 
 })
+const emit=defineEmits(["styling"])
+const SelectedMessage=()=>{
+emit("styling",props.msgData.message);
+}
 </script>
 
 <template>
 
-<div class="message" :class="{sender:msgData.from==loggedUser.id , receiver: msgData.to !=loggedUser.id}">
+<div class="message" :class="{sender:msgData.from==loggedUser.id , receiver: msgData.to !=loggedUser.id}" @click="SelectedMessage">
     {{ msgData.message }}
             <sub style="float: right">{{
               new Date(msgData.time).toLocaleTimeString([], {
