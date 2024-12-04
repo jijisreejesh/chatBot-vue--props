@@ -183,8 +183,7 @@ const handleLogout = () => {
 //Taking Emit message from chatSection component
 const divStyle=(i)=>{
 divStyling.value=true;
-console.log(i);
-msgFromChatSection.value=i;
+msgFromChatSection.value=msgsArray.value[i].message;
 }
 </script>
 
@@ -215,6 +214,7 @@ msgFromChatSection.value=i;
           <ChatSection v-for="(i,index) in msgsArray"
            :key="index"
            :msgData="i"
+           :index="index"
            :loggedUser="loggedUser"
            @styling="divStyle"
           />

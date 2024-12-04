@@ -6,12 +6,15 @@ const props=defineProps({
     },
     loggedUser:{
         type:Object
+    },
+    index:{
+      type:Number
     }
 
 })
 const emit=defineEmits(["styling"])
 const SelectedMessage=()=>{
-emit("styling",props.msgData.message);
+emit("styling",props.index);
 }
 </script>
 
@@ -19,7 +22,7 @@ emit("styling",props.msgData.message);
 
 <div class="message" :class="{sender:msgData.from==loggedUser.id , receiver: msgData.to !=loggedUser.id}" @click="SelectedMessage">
     {{ msgData.message }}
-            <sub style="float: right">{{
+            <span style="float: right">{{
               new Date(msgData.time).toLocaleTimeString([], {
                 year: "numeric",
                 month: "2-digit",
@@ -28,7 +31,7 @@ emit("styling",props.msgData.message);
                 minute: "2-digit",
                 hour12: false,
               })
-            }}</sub>
+            }}</span>
  
 </div>
 
@@ -41,6 +44,7 @@ emit("styling",props.msgData.message);
     box-sizing: border-box;
 }
 .message {
+  position: relative;
   color: whitesmoke;
   padding: 10px;
   margin-bottom: 10px;
@@ -60,8 +64,16 @@ emit("styling",props.msgData.message);
 }
 .receiver {
   align-self: flex-start;
-  background-color: #dae6e4;
+  background: #ddd;
   color: black;
   text-align: left;
+}
+span{
+position: absolute;
+bottom:5px;
+right:10px;
+font-size: 10px;
+color: rgb(86, 63, 63);
+
 }
 </style>
