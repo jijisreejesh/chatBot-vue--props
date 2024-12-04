@@ -2,6 +2,10 @@
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ChatSection from "./ChatSection.vue";
+import Buttons from "./Buttons.vue";
+import { IconUserCircle } from '@tabler/icons-vue'
+ 
+
 let msgFromChatSection=ref('');
 const router1 = useRouter();
 const usersArray = ref([]);
@@ -185,6 +189,7 @@ const divStyle=(i)=>{
 divStyling.value=true;
 msgFromChatSection.value=msgsArray.value[i].message;
 }
+
 </script>
 
 <template>
@@ -199,9 +204,15 @@ msgFromChatSection.value=msgsArray.value[i].message;
           :class="{ selected: selectedUser && selectedUser.name === i.name }"
         >
           {{ i.name }}
-        </li>
+          <IconUserCircle style="float: inline-end;" />
+          </li>
       </ul>
-      <button @click="handleLogout">LogOut</button>
+       <Buttons 
+       classBtn="btnStyle"
+       text="Logout"
+       col="red"
+       @click="handleLogout" />
+      <!-- <button @click="handleLogout">LogOut</button> -->
     </div>
     <div class="chat-window" v-if="selectedUser">
       <h3>
@@ -227,7 +238,19 @@ msgFromChatSection.value=msgsArray.value[i].message;
           @keyup.enter="sendMessage"
           v-model="msg"
         />
-        <button @click="sendMessage">send</button>
+        <!-- <Buttons 
+        innerText="Send" 
+        outline="tonal" 
+        elevation="20"
+        activeBtn="primary"
+        @click="sendMessage"/> -->
+        <!-- <button @click="sendMessage">send</button> -->
+        <Buttons 
+         classBtn="btnSend"
+         text="Send"
+         col="blue"
+         disable="true"
+        @click="sendMessage"/>
       </div>
     </div>
     <div v-else class="no-chat">
@@ -269,15 +292,15 @@ msgFromChatSection.value=msgsArray.value[i].message;
   background: #ddd;
   font-weight: bold;
 }
-.sidebar button {
-  position: absolute;
+ /* .btnStyle{
+ position: absolute;
   bottom: 0;
   margin-bottom: 20px;
-  font-size: xx-large;
-  background-color: red;
-  border-radius: 10px;
-  padding: 3px;
-}
+  padding-top:5px;
+  padding-bottom: 5px;
+  /* padding: 3px;
+align-self: center;  
+}  */
 .sidebar button:active {
   background-color: #007bff;
 }
@@ -293,18 +316,7 @@ msgFromChatSection.value=msgsArray.value[i].message;
 .chat-window h3 {
   color: rgb(138, 11, 177);
 }
-.chat-input button {
-  font-size: large;
-  padding: 3px;
-  padding-left: 5px;
-  padding-right: 5px;
-  background-color: #ebd086;
-  color: red;
-  border-radius: 10px;
-}
-.chat-input button:active {
-  background-color: #007bff;
-}
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -334,13 +346,13 @@ msgFromChatSection.value=msgsArray.value[i].message;
   color: #888;
 }
 .selected {
-  background-color: #74a9e2;
+  background-color: #007bff;
   color: white;
 }
 
 
 #chatMessageSelection {background: url("https://images.unsplash.com/photo-1605707159327-f43132f89a5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80");
-	/*background-size: contain;*/
+
 	background-clip: text;
 	-webkit-background-clip: text;
 text-align: center;   

@@ -73,7 +73,7 @@ position: absolute;
 bottom:5px;
 right:10px;
 font-size: 10px;
-color: rgb(86, 63, 63);
+
 
 }
 </style>
