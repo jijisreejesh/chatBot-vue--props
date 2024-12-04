@@ -4,8 +4,8 @@ import { useRouter } from "vue-router";
 import ChatSection from "./ChatSection.vue";
 import Buttons from "./Buttons.vue";
 import { IconUserCircle } from '@tabler/icons-vue'
- 
 
+ 
 let msgFromChatSection=ref('');
 const router1 = useRouter();
 const usersArray = ref([]);
@@ -247,9 +247,9 @@ msgFromChatSection.value=msgsArray.value[i].message;
         <!-- <button @click="sendMessage">send</button> -->
         <Buttons 
          classBtn="btnSend"
-         text="Send"
+         text="→"
          col="blue"
-         disable="true"
+         :disable="msg?false:true"
         @click="sendMessage"/>
       </div>
     </div>

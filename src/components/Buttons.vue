@@ -45,6 +45,9 @@ button{
   padding-top:5px;
   padding-bottom: 5px;
 } 
+.btnSend{
+   font-size: xx-large;
+}
 .btnSend:hover{
 background-color: rgb(151, 151, 204);
 }
