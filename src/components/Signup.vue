@@ -1,13 +1,21 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
+
 const usersArray = ref([]);
 const checkedState = ref(false);
+
+
+// Form state
+ const formRef = ref(null);
+const isFormValid = ref(false);
+
 onMounted(() => {
   let retrievedData = localStorage.getItem("user");
-  usersArray.value = retrievedData?JSON.parse(retrievedData):[];
+  usersArray.value = retrievedData ? JSON.parse(retrievedData) : [];
   console.log(usersArray.value);
 });
+
 
 const user = ref({
   id: "",
@@ -23,40 +31,14 @@ const handleCancel = () => {
   router1.push("/");
 };
 const handleSignup = () => {
-   if (usersArray.value.length===0) 
-   {
-    const getRandomNumber = (min, max) => {
-      return Math.random() * (max - min) + min;
-     };
 
-    user.value.id = getRandomNumber(0, 10000);
-    usersArray.value.push(user.value);
-    localStore();
-    alert("Registration Successful");
-    user.value.name = "";
-    user.value.email = "";
-    user.value.password = "";
-    checkedState.value = false;
-   }
-  else {
-  let checkEmailExist = usersArray.value.some((i) => {
-    return i.email === user.value.email;
-  });
-  if (checkEmailExist) {
-    console.log("Exists",checkEmailExist);
-    alert("User Already Exists");
-  } else {
+  if (isFormValid.value) {
+  if (usersArray.value.length === 0) {
     const getRandomNumber = (min, max) => {
       return Math.random() * (max - min) + min;
     };
 
     user.value.id = getRandomNumber(0, 10000);
-    let checkId = usersArray.value.some((i) => {
-      return i.id === user.id;
-    });
-    if (checkId) {
-      user.id = getRandomNumber(0, 10000);
-    }
     usersArray.value.push(user.value);
     localStore();
     alert("Registration Successful");
@@ -64,116 +46,113 @@ const handleSignup = () => {
     user.value.email = "";
     user.value.password = "";
     checkedState.value = false;
-    //}
+  } else {
+    let checkEmailExist = usersArray.value.some((i) => {
+      return i.email === user.value.email;
+    });
+    if (checkEmailExist) {
+      console.log("Exists", checkEmailExist);
+      alert("User Already Exists");
+    } else {
+      const getRandomNumber = (min, max) => {
+        return Math.random() * (max - min) + min;
+      };
+
+      user.value.id = getRandomNumber(0, 10000);
+      let checkId = usersArray.value.some((i) => {
+        return i.id === user.id;
+      });
+      if (checkId) {
+        user.id = getRandomNumber(0, 10000);
+      }
+      usersArray.value.push(user.value);
+      localStore();
+      alert("Registration Successful");
+      user.value.name = "";
+      user.value.email = "";
+      user.value.password = "";
+      checkedState.value = false;
+    }
   }
-}
+  }
 };
 const myPassword = () => {
   checkedState.value = !checkedState.value;
 };
+
+
+ // Validation rules
+ const nameRules = [
+      (v) => !!v || "Name is required",
+      (v) => (v && v.length >= 3) || "Name must be at least 3 characters long",
+    ];
+
+    const emailRules = [
+      (v) => !!v || "Email is required",
+      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+    ];
+ // Validation rules
+ const passwordRules = [
+      (v) => !!v || "Password is required",
+      (v) =>
+        v.length >= 8 ||
+        "Password must be at least 8 characters long",
+      (v) =>
+        /[A-Z]/.test(v) || "Password must contain at least one uppercase letter",
+      (v) =>
+        /[a-z]/.test(v) || "Password must contain at least one lowercase letter",
+      (v) =>
+        /\d/.test(v) || "Password must contain at least one number",
+    ];
+
+
+// Form methods
+const validateForm = () => {
+      if (formRef.value) {
+        formRef.value.validate();
+        console.log(isFormValid.value);
+      }
+    };
 </script>
 
 <template>
-  <form @submit.prevent="handleSignup">
-    <fieldset>
-      <legend>SignUp</legend>
-      <label for="name">Enter your name</label>
-      <input
-        type="text"
-        id="name"
-        v-model.trim="user.name"
-        placeholder="Enter your name"
-        required
-      /><br />
-      <label for="email">Enter your Username</label>
-      <input
-        type="email"
-        v-model.trim="user.email"
-        id="email"
-        placeholder="Enter your gmail-id"
-        required
-      /><br />
-      <label for="password">Enter your password</label>
-      <input
-        :type="checkedState ? 'text' : 'password'"
-        id="password"
-        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+
+<v-sheet class="position-absolute d-flex align-center  bg-primary justify-center w-100 h-100" rounded>
+  <v-card class="mx-auto px-6 py-8" width="450">
+  <div class="text-h3 text-center pb-3 pt-3 mb-5 bg-purple">SignUp</div>
+    <v-form @submit.prevent="handleSignup" ref="formRef" v-model="isFormValid">
+       <v-text-field 
+       v-model.trim="user.name" 
+       label="Name"
+       :rules="nameRules"
+       required
+       ></v-text-field>
+
+      <v-text-field 
+      v-model.trim="user.email" 
+      label="E-mail"
+      :rules="emailRules"
+      required
+      ></v-text-field>
+      <v-text-field
         v-model.trim="user.password"
-        placeholder="Enter the password"
-      /><br />
-      <label />
-      <input type="checkbox" @click="myPassword" v-model="checkedState" />
-      <span style="font-size: large; color: blue">Show Password</span>
-      <section>
-        <input type="submit" />
-        <button @click="handleCancel">Cancel</button>
-      </section>
-    </fieldset>
-  </form>
+        :rules="passwordRules"
+        app
+         :append-inner-icon="checkedState ? 'mdi mdi-eye' : 'mdi mdi-eye-off'"
+        :type="checkedState ? 'text' : 'password'"
+        label="Enter your password"
+        type="password"
+        required
+        @click="myPassword"
+      ></v-text-field>
+      <v-col class="text-center">
+     <v-btn @click="validateForm" class="mx-3" type="submit">Submit</v-btn>
+      <v-btn type="reset" class="mx-3">Reset</v-btn>
+    </v-col>
+    </v-form>
+    </v-card>
+  </v-sheet>
+
 </template>
 
-<style>
-form {
-  margin-top: 100px;
-}
-form fieldset {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  line-height: 60px;
-  width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  background-image: linear-gradient(to right, #ff758c 0%, #ff7eb3 100%);
-}
-legend {
-  text-align: center;
-  font-size: 40px;
-  color: rgb(9, 9, 102);
-  padding-bottom: 30px;
-}
-label {
-  display: inline-block;
-  width: 350px;
-  padding-left: 20px;
-  font-size: x-large;
-  color: rgb(171, 238, 229);
-}
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-  width: 200px;
-  height: 40px;
-  font-size: larger;
-}
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus {
-  background-color: antiquewhite;
-}
-input[type="checkbox"] {
-  width: 30px; /*Desired width*/
-  height: 30px; /*Desired height*/
-}
-section {
-  margin: 10px 0px 30px 0px;
-  width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-section button,
-input[type="submit"] {
-  margin-left: 20px;
-  margin-right: 20px;
-  padding: 5px;
-  border-radius: 10px;
-  background-color: rgb(24, 21, 204);
-  color: aliceblue;
-  font-size: larger;
-}
-section button:hover,
-input[type="submit"]:hover {
-  background-color: aliceblue;
-  color: blue;
-}
-</style>
+
