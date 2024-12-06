@@ -2,8 +2,6 @@
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ChatSection from "./ChatSection.vue";
-import Buttons from "./Buttons.vue";
-import { IconUserCircle } from "@tabler/icons-vue";
 
 let msgFromChatSection = ref("");
 const router1 = useRouter();
@@ -140,7 +138,7 @@ const sendMessage = () => {
       //msgsArray.value = chatData.messages.slice(chatData.clearChat[clearChatIndex]);
       let fromIndexOfChatDisplay =
         chatArrayForLocalStorage.value[indexOfChat.value].clearChat[
-        clearChatUserId + 1
+          clearChatUserId + 1
         ];
       msgsArray.value = chatArrayForLocalStorage.value[
         indexOfChat.value
@@ -191,65 +189,93 @@ const divStyle = (i) => {
 </script>
 
 <template>
- 
-  <v-container fluid class="bg-surface-variant">
+  <v-container fluid class="bg-surface-variant overflow-hidden">
     <v-row style="height: 100vh">
-
-      <v-col cols="3">
-        <v-sheet class="d-flex flex-column justify-space-between pa-2 mb-2 ma-2 h-100">
+      <v-col xs="12" md="3">
+        <v-sheet
+          class="d-flex flex-column justify-space-between pa-2 mb-2 ma-2 h-100"
+        >
           <div>
-            <div class="text-h5 text-left text-green-darken-4 text-h4 pb-3">
-              Welcome {{ loggedUser.name }}
+            <div class="text-h5 text-left text-green text-h4 pb-3">
+              Welcome <span class="text-green-darken-4">{{ loggedUser.name }}</span>
             </div>
 
             <v-list>
-              <v-list-item v-for="i in usersArray" :key="i.id" 
-              class="bg-deep-purple-lighten-4 text-h6 text-indigo-darken-4"
-              @click="selectUser(i)" :class="{
-                selected: selectedUser && selectedUser.name === i.name,
-              }">
+              <v-list-item
+                v-for="i in usersArray"
+                :key="i.id"
+                class="text-h6 text-indigo-darken-4 border-b-lg"
+                @click="selectUser(i)"
+                prepend-icon="mdi-account"
+                :class="{
+                  selected: selectedUser && selectedUser.name === i.name,
+                }"
+              >
                 {{ i.name }}
               </v-list-item>
             </v-list>
           </div>
-          <v-btn @click="handleLogout" class="text-red-darken-1 text-h5">Logout</v-btn>
+          <v-btn
+            @click="handleLogout"
+            class="elevation-5 outlined text-red-darken-1 text-h5 rounded-xl"
+            >Logout</v-btn
+          >
         </v-sheet>
       </v-col>
 
+      <v-col cols="12" md="9"> 
+        <v-sheet class="pa-2 mb-2 ma-2 h-100">
+          <div
+            v-if="selectedUser"
+            class="d-flex flex-column justify-space-between h-100">
 
-      <v-col>
+            <div>
+              <h3 class="mb-4 mt-4 text-pink-darken-2 text-h5">
+                Chat with
+                <span class="text-pink-darken-2 text-h4" v-if="selectedUser">{{ selectedUser.name }}</span>
+                <v-btn @click="clearChat" class="text-orange-darken-4 float-end elevation-4 text-h5"
+                  >Clear Chat
+                </v-btn>
+              </h3>
 
-        <v-sheet class="pa-2 mb-2 ma-2 h-100 ">
-
-          <div v-if="selectedUser">
-            <h3>
-              Chat with <span v-if="selectedUser">{{ selectedUser.name }}</span>
-              <span @click="clearChat" style="float:right;color:red">Clear Chat</span>
-            </h3>
-            <div @click.self="clearStyling">
-              <div v-show="divStyling">
-                <p id="chatMessageSelection">{{ msgFromChatSection }}</p>
+              <div @click.self="clearStyling">
+                <div v-show="divStyling">
+                  <p id="chatMessageSelection">{{ msgFromChatSection }}</p>
+                </div>
               </div>
-              <div v-if="msgsArray.length">
-                <ChatSection v-for="(i, index) in msgsArray" :key="index" :msgData="i" :index="index"
-                  :loggedUser="loggedUser" @styling="divStyle" />
-              </div>
-            </div>
-            <div class="position-fixed bottom-0 mx-auto w-66">
-                <v-text-field 
-                class="mx-auto w-75"
-                v-model="msg" 
-                @keyup.enter="sendMessage" 
-                :append-inner-icon="mdi-send"
-                  label="Type a Message" 
-                  type="text" 
-                  variant="filled" 
-                  clearable
-                  @click:append-inner="sendMessage"></v-text-field>
-                <!-- <v-btn :disable="msg ? false : true" @click="sendMessage">send</v-btn> -->
-            </div>
+       
+
+            <v-sheet v-if="msgsArray.length" class="overflow-auto elevation-0"  style="max-height: 640px;" >
+              <ChatSection
+                v-for="(i, index) in msgsArray"
+                :key="index"
+                :msgData="i"
+                :index="index"
+                :loggedUser="loggedUser"
+                @styling="divStyle"
+              />
+            </v-sheet>
           </div>
-          <div v-else >
+
+            <div>
+           
+                  <v-text-field
+                    class="mx-auto w-100 mt-3 rounded text-h4"
+                    v-model="msg"
+                    @keyup.enter="sendMessage"
+                    append-inner-icon="mdi-send curser-pointer"
+                    label="Type a Message"
+                    type="text"
+                    clearable
+                    variant="solo"
+                    @click:append-inner="sendMessage"
+                  ></v-text-field>
+              
+           
+            </div>
+
+          </div>
+          <div v-else style="display: flex;color:red;font-size: x-large;justify-content: center;height:75vh;align-items: center;">
             <p>Select a user to start chatting.</p>
           </div>
         </v-sheet>
@@ -257,8 +283,3 @@ const divStyle = (i) => {
     </v-row>
   </v-container>
 </template>
-<style>
-v-list-item:hover{
- background-color: rgb(18, 218, 158);
-}
-</style>
