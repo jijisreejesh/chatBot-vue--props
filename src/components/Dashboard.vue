@@ -186,56 +186,88 @@ const divStyle = (i) => {
   divStyling.value = true;
   msgFromChatSection.value = msgsArray.value[i].message;
 };
+let welcome = "";
+let dialog="true"
 </script>
 
 <template>
-  <v-container fluid class="bg-surface-variant overflow-hidden">
-    <v-row style="height: 100vh">
-      <v-col xs="12" md="3">
-        <v-sheet
-          class="d-flex flex-column justify-space-between pa-2 mb-2 ma-2 h-100"
-        >
-          <div>
-            <div class="text-h5 text-left text-green text-h4 pb-3">
-              Welcome <span class="text-green-darken-4">{{ loggedUser.name }}</span>
-            </div>
+    <v-card>
+    <v-layout>
+      <v-navigation-drawer
+        expand-on-hover
+        :rail="$vuetify.display.smAndDown"
+        permanent
+        color="blue-lighten-5"
+      >
+       
+ <v-list class="text-deep-purple">
+          <v-list-item :subtitle="loggedUser.name"  title="welcome" >
+          </v-list-item>
+        </v-list>
+      
+        <v-divider></v-divider>
 
-            <v-list>
-              <v-list-item
-                v-for="i in usersArray"
-                :key="i.id"
-                class="text-h6 text-indigo-darken-4 border-b-lg"
-                @click="selectUser(i)"
-                prepend-icon="mdi-account"
-                :class="{
-                  selected: selectedUser && selectedUser.name === i.name,
-                }"
-              >
-                {{ i.name }}
-              </v-list-item>
-            </v-list>
-          </div>
-          <v-btn
-            @click="handleLogout"
-            class="elevation-5 outlined text-red-darken-1 text-h5 rounded-xl"
-            >Logout</v-btn
+        <v-list density="compact" nav>
+          <v-list-item
+            v-for="i in usersArray"
+            :key="i.id"
+            class="text-indigo-darken-4 border-b-lg"
+            @click="selectUser(i)"
+            prepend-icon="mdi-account"
+            :class="{
+              selected: selectedUser && selectedUser.name === i.name,
+            }"
           >
-        </v-sheet>
-      </v-col>
+            {{ i.name }}
+          </v-list-item>
+        </v-list>
+        <template v-slot:append>
+          <v-dialog max-width="500">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-list density="compact" nav>
+                <v-list-item prepend-icon="mdi-logout"  v-bind="activatorProps" title="Logout" class="text-red text-h5">
 
-      <v-col cols="12" md="9"> 
+                </v-list-item>
+              </v-list>
+            </template>
+
+            <template v-slot:default="{ isActive }">
+              <v-card title="ALERT" class="text-red bg-red-lighten-5">
+                <v-card-text> Do you want to Logout? </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+
+                  <v-btn text="Yes" @click="handleLogout"> </v-btn>
+                  <v-btn text="No" @click="isActive.value = false"></v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+        </template>
+      </v-navigation-drawer>
+
+      <v-main style="height: 100vh">
         <v-sheet class="pa-2 mb-2 ma-2 h-100">
           <div
             v-if="selectedUser"
-            class="d-flex flex-column justify-space-between h-100">
-
+            class="d-flex flex-column justify-space-between h-100"
+          >
             <div>
               <h3 class="mb-4 mt-4 text-pink-darken-2 text-h5">
                 Chat with
-                <span class="text-pink-darken-2 text-h4" v-if="selectedUser">{{ selectedUser.name }}</span>
-                <v-btn @click="clearChat" class="text-orange-darken-4 float-end elevation-4 text-h5"
+                <span class="text-pink-darken-2 text-h4" v-if="selectedUser">{{
+                  selectedUser.name
+                }}</span>
+                
+                <v-btn
+                
+                  @click="clearChat"
+                  class="text-orange-darken-4 float-right elevation-4 text-h5"
                   >Clear Chat
                 </v-btn>
+
+                
               </h3>
 
               <div @click.self="clearStyling">
@@ -243,43 +275,54 @@ const divStyle = (i) => {
                   <p id="chatMessageSelection">{{ msgFromChatSection }}</p>
                 </div>
               </div>
-       
 
-            <v-sheet v-if="msgsArray.length" class="overflow-auto elevation-0"  style="max-height: 640px;" >
-              <ChatSection
-                v-for="(i, index) in msgsArray"
-                :key="index"
-                :msgData="i"
-                :index="index"
-                :loggedUser="loggedUser"
-                @styling="divStyle"
-              />
-            </v-sheet>
-          </div>
-
-            <div>
-           
-                  <v-text-field
-                    class="mx-auto w-100 mt-3 rounded text-h4"
-                    v-model="msg"
-                    @keyup.enter="sendMessage"
-                    append-inner-icon="mdi-send curser-pointer"
-                    label="Type a Message"
-                    type="text"
-                    clearable
-                    variant="solo"
-                    @click:append-inner="sendMessage"
-                  ></v-text-field>
-              
-           
+              <v-sheet
+                v-if="msgsArray.length"
+                class="overflow-auto elevation-0"
+                style="max-height: 640px"
+              >
+                <ChatSection
+                  v-for="(i, index) in msgsArray"
+                  :key="index"
+                  :msgData="i"
+                  :index="index"
+                  :loggedUser="loggedUser"
+                  @styling="divStyle"
+                />
+              </v-sheet>
             </div>
 
+            <div>
+              <v-text-field
+                class="mx-auto w-100 mt-3 rounded text-h4"
+                v-model="msg"
+                @keyup.enter="sendMessage"
+                append-inner-icon="mdi-send curser-pointer"
+                label="Type a Message"
+                type="text"
+                clearable
+                variant="solo"
+                @click:append-inner="sendMessage"
+              ></v-text-field>
+            </div>
           </div>
-          <div v-else style="display: flex;color:red;font-size: x-large;justify-content: center;height:75vh;align-items: center;">
+          <div
+            v-else
+            style="
+              display: flex;
+              color: red;
+              font-size: x-large;
+              justify-content: center;
+              height: 75vh;
+              align-items: center;
+            "
+          >
             <p>Select a user to start chatting.</p>
           </div>
         </v-sheet>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-main>
+    </v-layout>
+  </v-card>
+
+  <!-- </v-container> -->
 </template>
