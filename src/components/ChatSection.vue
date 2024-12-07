@@ -19,7 +19,7 @@ const SelectedMessage = () => {
 
 <template>
   <v-card
-    class="position-relative mb-3 pa-5 w-66 elevation-2 text-h6"
+    class="position-relative mb-3 pa-5 w-66 elevation-2 text-h6 text-capitalize"
     :class="msgData.from == loggedUser.id ? ' sender bg-primary' : 'bg-indigo-lighten-5'"
     @click="SelectedMessage"
   >

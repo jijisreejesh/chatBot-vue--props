@@ -187,11 +187,11 @@ const divStyle = (i) => {
   msgFromChatSection.value = msgsArray.value[i].message;
 };
 let welcome = "";
-let dialog="true"
+let dialog = "true";
 </script>
 
 <template>
-    <v-card>
+  <v-card>
     <v-layout>
       <v-navigation-drawer
         expand-on-hover
@@ -199,19 +199,22 @@ let dialog="true"
         permanent
         color="blue-lighten-5"
       >
-       
- <v-list class="text-deep-purple">
-          <v-list-item :subtitle="loggedUser.name"  title="welcome" >
-          </v-list-item>
+        <v-list class="text-deep-purple">
+          <v-list-item-title class="text-h4 text-center text-uppercase"
+            >Welcome</v-list-item-title
+          >
+          <v-list-item-title class="text-h4 text-center text-uppercase">{{
+            loggedUser.name
+          }}</v-list-item-title>
         </v-list>
-      
+
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
           <v-list-item
             v-for="i in usersArray"
             :key="i.id"
-            class="text-indigo-darken-4 border-b-lg"
+            class="text-indigo-darken-4 border-b-lg text-capitalize text-h6"
             @click="selectUser(i)"
             prepend-icon="mdi-account"
             :class="{
@@ -224,9 +227,15 @@ let dialog="true"
         <template v-slot:append>
           <v-dialog max-width="500">
             <template v-slot:activator="{ props: activatorProps }">
-              <v-list density="compact" nav>
-                <v-list-item prepend-icon="mdi-logout"  v-bind="activatorProps" title="Logout" class="text-red text-h5">
-
+              <v-list density="compact" class="pa-2 bg-primary" nav>
+                <v-list-item
+                  prepend-icon="mdi-logout"
+                  v-bind="activatorProps"
+                  class="text-red text-h5"
+                >
+                  <v-list-item-title class="text-h4 font-weight-medium"
+                    >Logout</v-list-item-title
+                  >
                 </v-list-item>
               </v-list>
             </template>
@@ -257,17 +266,14 @@ let dialog="true"
               <h3 class="mb-4 mt-4 text-pink-darken-2 text-h5">
                 Chat with
                 <span class="text-pink-darken-2 text-h4" v-if="selectedUser">{{
-                  selectedUser.name
+                  selectedUser.name.toUpperCase()
                 }}</span>
-                
+
                 <v-btn
-                
                   @click="clearChat"
                   class="text-orange-darken-4 float-right elevation-4 text-h5"
                   >Clear Chat
                 </v-btn>
-
-                
               </h3>
 
               <div @click.self="clearStyling">
