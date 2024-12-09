@@ -2,6 +2,7 @@
 import { ref, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ChatSection from "./ChatSection.vue";
+import { fa } from "vuetify/locale";
 
 let msgFromChatSection = ref("");
 const router1 = useRouter();
@@ -149,6 +150,7 @@ const sendMessage = () => {
 };
 const clearChat = () => {
   clearStyling();
+
   console.log("Chat cleared");
   if (msgsArray.value) {
     if (
@@ -187,7 +189,6 @@ const divStyle = (i) => {
   msgFromChatSection.value = msgsArray.value[i].message;
 };
 let welcome = "";
-let dialog = "true";
 </script>
 
 <template>
@@ -227,13 +228,15 @@ let dialog = "true";
         <template v-slot:append>
           <v-dialog max-width="500">
             <template v-slot:activator="{ props: activatorProps }">
-              <v-list density="compact" class="pa-2 bg-primary" nav>
+              <v-list density="compact" class="bg-primary" nav>
                 <v-list-item
                   prepend-icon="mdi-logout"
                   v-bind="activatorProps"
-                  class="text-red text-h5"
+                  class="text-red text-h5 line-height-0"
                 >
-                  <v-list-item-title class="text-h4 font-weight-medium"
+                  <v-list-item-title
+                    class="text-h4 font-weight-medium"
+                    style="line-height: 1"
                     >Logout</v-list-item-title
                   >
                 </v-list-item>
@@ -263,18 +266,47 @@ let dialog = "true";
             class="d-flex flex-column justify-space-between h-100"
           >
             <div>
-              <h3 class="mb-4 mt-4 text-pink-darken-2 text-h5">
-                Chat with
-                <span class="text-pink-darken-2 text-h4" v-if="selectedUser">{{
-                  selectedUser.name.toUpperCase()
-                }}</span>
+              <div class="d-flex">
+                <h3 class="mb-4 mt-4 text-pink-darken-2 text-h5 flex-grow-1">
+                  Chat with
+                  <span
+                    class="text-pink-darken-2 text-h4"
+                    v-if="selectedUser"
+                    >{{ selectedUser.name.toUpperCase() }}</span
+                  >
+                </h3>
 
-                <v-btn
-                  @click="clearChat"
-                  class="text-orange-darken-4 float-right elevation-4 text-h5"
-                  >Clear Chat
-                </v-btn>
-              </h3>
+                <v-dialog max-width="500">
+                  <template v-slot:activator="{ props: activatorPropsClear }">
+                    <v-list density="compact" nav>
+                      <v-list-item>
+                        <v-list-item-title
+                          v-bind="activatorPropsClear"
+                          class="text-orange-darken-4 float-right elevation-4 pa-2 text-h5"
+                          style="line-height: 1; margin-bottom: 20px"
+                          >ClearChat</v-list-item-title
+                        >
+                      </v-list-item>
+                    </v-list>
+                  </template>
+
+                  <template v-slot:default="{ isActive }">
+                    <v-card title="ALERT" class="text-red bg-red-lighten-5">
+                      <v-card-text> Do you want to Clear? </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn text="Yes" @click="clearChat"> </v-btn>
+                        <v-btn
+                          text="No"
+                          @click="isActive.value = false"
+                        ></v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </template>
+                </v-dialog>
+              </div>
 
               <div @click.self="clearStyling">
                 <div v-show="divStyling">
